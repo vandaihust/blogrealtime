@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,15 +23,19 @@ import com.vandai.service.PostService;
 public class PostServiceImpl implements PostService{
 	@Autowired
 	PostRepository postRepository;
+	@Autowired
+	ModelMapper modelMapper;
 	//convert dto to entity
 	 private PostDto mapToDto(Post post) {
-		 return new PostDto(post.getId(), post.getTitle(), post.getDescription(), post.getContent());
+//		 return new PostDto(post.getId(), post.getTitle(), post.getDescription(), post.getContent());
+		 return modelMapper.map(post, PostDto.class);
 	 }
 	 private Post mapToEntity(PostDto postDto) {
-		Post post = new Post();
-		post.setTitle(postDto.getTitle());
-		post.setContent(postDto.getContent());
-		post.setDescription(postDto.getDescription());
+//		Post post = new Post();
+//		post.setTitle(postDto.getTitle());
+//		post.setContent(postDto.getContent());
+//		post.setDescription(postDto.getDescription());
+		 Post post = modelMapper.map(postDto, Post.class);
 		return post;
 	 }
 	@Override
