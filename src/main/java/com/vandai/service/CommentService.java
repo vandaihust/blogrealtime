@@ -8,5 +8,6 @@ public interface CommentService {
 	CommentDto createComment(Long postId, CommentDto commentDto);
 	List<CommentDto> getAllComments(Long postId);
 	CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto);
-	String deletePost(Long post, Long id);
+	String deleteComment(Long postId, Long commentId);
+	CommentDto getCommentById(Long postId, Long commentId);
 }

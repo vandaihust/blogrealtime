@@ -1,26 +1,33 @@
 package com.vandai.services.impl;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.vandai.dto.CommentDto;
 import com.vandai.entity.Comment;
 import com.vandai.entity.Post;
+import com.vandai.exeption.BlogAPIExeption;
 import com.vandai.exeption.ResourceNotFoundExeption;
 import com.vandai.repository.CommentRepository;
 import com.vandai.repository.PostRepository;
 import com.vandai.service.CommentService;
+
 @Service
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
 	@Autowired
 	CommentRepository commentRepository;
 	@Autowired
 	PostRepository postRepository;
+
 	private CommentDto mapToDto(Comment comment) {
 		return new CommentDto(comment.getId(), comment.getName(), comment.getEmail(), comment.getBody());
 	}
+
 	private Comment mapToEntity(CommentDto commentDto) {
 		Comment comment = new Comment();
 		comment.setName(commentDto.getName());
@@ -28,33 +35,68 @@ public class CommentServiceImpl implements CommentService{
 		comment.setEmail(commentDto.getEmail());
 		return comment;
 	}
-	
+
 	@Override
 	public CommentDto createComment(Long postId, CommentDto commentDto) {
-		Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
 		Comment newComment = mapToEntity(commentDto);
 		newComment.setPost(post);
 		Comment commentResponse = commentRepository.save(newComment);
 		return mapToDto(commentResponse);
-	
+
 	}
 
 	@Override
 	public List<CommentDto> getAllComments(Long postId) {
-		// TODO Auto-generated method stub
-		return null;
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+		Set<Comment> listOfComment = post.getComments();
+		List<CommentDto> listOfCommentDto = listOfComment.stream().map((comment) -> mapToDto(comment))
+				.collect(Collectors.toList());
+		return listOfCommentDto;
 	}
 
 	@Override
 	public CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto) {
-		// TODO Auto-generated method stub
-		return null;
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+		Comment comment = commentRepository.findById(commentId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Comment", "id", commentId));
+		if(!comment.getPost().getId().equals(post.getId())) {
+			throw new BlogAPIExeption(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+		}
+		comment.setBody(commentDto.getBody());
+		comment.setEmail(commentDto.getEmail());
+		comment.setName(commentDto.getName());
+		Comment updateComment = commentRepository.save(comment);
+		return mapToDto(updateComment);
 	}
 
 	@Override
-	public String deletePost(Long post, Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public String deleteComment(Long postId, Long commentId) {
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+		Comment comment = commentRepository.findById(commentId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Comment", "id", commentId));
+		if(!comment.getPost().getId().equals(post.getId())) {
+			throw new BlogAPIExeption(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+		}
+		commentRepository.deleteById(commentId);
+		String msg = "Comment is deleted successfully";
+		return msg;
+	}
+
+	@Override
+	public CommentDto getCommentById(Long postId, Long commentId) {
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+		Comment comment = commentRepository.findById(commentId)
+				.orElseThrow(() -> new ResourceNotFoundExeption("Comment", "id", commentId));
+		if(!comment.getPost().getId().equals(post.getId())) {
+			throw new BlogAPIExeption(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+		}
+		return mapToDto(comment);
 	}
 
 }
