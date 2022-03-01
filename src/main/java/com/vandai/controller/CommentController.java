@@ -1,5 +1,7 @@
 package com.vandai.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ public class CommentController {
 	CommentService commentService;
 
 	@PostMapping("posts/{postId}/comments")
-	public ResponseEntity<?> createComment(@PathVariable long postId, @RequestBody CommentDto commentDto) {
+	public ResponseEntity<?> createComment(@PathVariable long postId, @Valid @RequestBody CommentDto commentDto) {
 		return new ResponseEntity<>(commentService.createComment(postId, commentDto), HttpStatus.CREATED);
 	}
 
@@ -38,7 +40,7 @@ public class CommentController {
 
 	@PutMapping("posts/{postId}/comments/{commentId}")
 	public ResponseEntity<?> updateComment(@PathVariable long postId, @PathVariable long commentId,
-			@RequestBody CommentDto commentDto) {
+			@Valid @RequestBody CommentDto commentDto) {
 		return new ResponseEntity<>(commentService.updateComment(postId, commentId, commentDto), HttpStatus.OK);
 	}
 
