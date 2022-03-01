@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import com.vandai.dto.CommentDto;
 import com.vandai.entity.Comment;
 import com.vandai.entity.Post;
-import com.vandai.exeption.BlogAPIExeption;
-import com.vandai.exeption.ResourceNotFoundExeption;
+import com.vandai.exception.BlogAPIException;
+import com.vandai.exception.ResourceNotFoundException;
 import com.vandai.repository.CommentRepository;
 import com.vandai.repository.PostRepository;
 import com.vandai.service.CommentService;
@@ -43,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public CommentDto createComment(Long postId, CommentDto commentDto) {
 		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+				.orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 		Comment newComment = mapToEntity(commentDto);
 		newComment.setPost(post);
 		Comment commentResponse = commentRepository.save(newComment);
@@ -54,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public List<CommentDto> getAllComments(Long postId) {
 		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+				.orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 		Set<Comment> listOfComment = post.getComments();
 		List<CommentDto> listOfCommentDto = listOfComment.stream().map((comment) -> mapToDto(comment))
 				.collect(Collectors.toList());
@@ -64,11 +64,11 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto) {
 		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+				.orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 		Comment comment = commentRepository.findById(commentId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Comment", "id", commentId));
+				.orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 		if(!comment.getPost().getId().equals(post.getId())) {
-			throw new BlogAPIExeption(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+			throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
 		}
 		comment.setBody(commentDto.getBody());
 		comment.setEmail(commentDto.getEmail());
@@ -80,11 +80,11 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public String deleteComment(Long postId, Long commentId) {
 		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+				.orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 		Comment comment = commentRepository.findById(commentId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Comment", "id", commentId));
+				.orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 		if(!comment.getPost().getId().equals(post.getId())) {
-			throw new BlogAPIExeption(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+			throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
 		}
 		commentRepository.deleteById(commentId);
 		String msg = "Comment is deleted successfully";
@@ -94,11 +94,11 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public CommentDto getCommentById(Long postId, Long commentId) {
 		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Post", "id", postId));
+				.orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 		Comment comment = commentRepository.findById(commentId)
-				.orElseThrow(() -> new ResourceNotFoundExeption("Comment", "id", commentId));
+				.orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 		if(!comment.getPost().getId().equals(post.getId())) {
-			throw new BlogAPIExeption(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+			throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
 		}
 		return mapToDto(comment);
 	}

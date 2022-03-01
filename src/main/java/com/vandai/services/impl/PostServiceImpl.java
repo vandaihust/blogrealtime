@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.vandai.dto.PostDto;
 import com.vandai.dto.PostResponse;
 import com.vandai.entity.Post;
-import com.vandai.exeption.ResourceNotFoundExeption;
+import com.vandai.exception.ResourceNotFoundException;
 import com.vandai.repository.PostRepository;
 import com.vandai.service.PostService;
 
@@ -65,12 +65,12 @@ public class PostServiceImpl implements PostService{
 	}
 	@Override
 	public PostDto getPostById(Long id) {
-		Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundExeption("Post", "id", id));
+		Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post", "id", id));
 		return mapToDto(post);
 	}
 	@Override
 	public PostDto updatePost(PostDto postDto, Long id) {
-		Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundExeption("Post", "id", id));
+		Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post", "id", id));
 		post.setTitle(postDto.getTitle());
 		post.setContent(postDto.getContent());
 		post.setDescription(postDto.getDescription());
@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService{
 	}
 	@Override
 	public String deletePost(Long id) {
-		postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundExeption("Post", "id", id));
+		postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post", "id", id));
 		if(postRepository.existsById(id)) {
 			postRepository.deleteById(id);
 			return "Post entity delete successfully";

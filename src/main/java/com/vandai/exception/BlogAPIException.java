@@ -1,18 +1,18 @@
-package com.vandai.exeption;
+package com.vandai.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class BlogAPIExeption extends RuntimeException{
+public class BlogAPIException extends RuntimeException{
 	private HttpStatus status;
 	private String message;
 
-	public BlogAPIExeption(HttpStatus status, String message) {
+	public BlogAPIException(HttpStatus status, String message) {
 		super();
 		this.status = status;
 		this.message = message;
 	}
 
-	public BlogAPIExeption() {
+	public BlogAPIException() {
 		super();
 	}
 
