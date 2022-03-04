@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vandai.config.SecuredRestController;
 import com.vandai.dto.CommentDto;
 import com.vandai.service.CommentService;
 
 @RestController
 @RequestMapping("api")
-public class CommentController {
+public class CommentController implements SecuredRestController{
 	@Autowired
 	CommentService commentService;
 

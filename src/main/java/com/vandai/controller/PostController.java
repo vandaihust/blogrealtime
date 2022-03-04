@@ -23,7 +23,7 @@ import com.vandai.utils.AppContants;
 
 @RestController
 @RequestMapping("api/posts")
-public class PostController {
+public class PostController implements SecuredRestController {
 	@Autowired
 	PostService postService;
 
