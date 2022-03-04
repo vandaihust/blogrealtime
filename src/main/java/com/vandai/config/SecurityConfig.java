@@ -68,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                    "/swagger-resources/**",
                                    "/configuration/security",
                                    "/swagger-ui/**",
-                                   "/webjars/**");
+                                   "/webjars/**","/vandai");
     }
 
 //	@Override

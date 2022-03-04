@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vandai.config.SecuredRestController;
 import com.vandai.dto.PostDto;
 import com.vandai.service.PostService;
 import com.vandai.utils.AppContants;
